@@ -3,6 +3,7 @@
 The goal is to test some alternatives of tools to create dashboards in (i)Python.
 
 This is by no means an extensive benchmark.
+Note that even claims about some missing feature might be a consequence of lack of understanding or because I have only read the standard examples.
 
 Requirements include:
 
@@ -11,11 +12,10 @@ Requirements include:
 - The visualization tool must be easily integrated with Pandas
 - The visualization engine on the client side must be able to get streaming data from a big data source without relevant performance loss
 
-Included in this test: matplotlib, ipywidgets, d3, bokeh and plotly.
-
 ## TODO
 
 - Check whether tools can be used in combination (e.g. bokeh for major tasks and d3 integrated with ipython when some low-level stuff is needed)
+- Check https://plot.ly/python/dashboard/
 - Fork dash (https://github.com/plotly/dash) and rewrite the API and examples to work with offline plots.
 
 # What to use: ipywidgets, bokeh or d3?
@@ -49,8 +49,9 @@ That sucks. I have not found any API reference either.
 Not tested. Might be difficult.
 
 Also, as stated in https://jakevdp.github.io/blog/2013/12/05/static-interactive-widgets/,
-ipywidgets "save the generated frames within divs that are hidden and shown whenever the widget is changed". Maybe this is not true as for now (the post is from 2013). However, I haven't found any evidence that ipywidgets scales to streaming data and million data points. To create "live" dashboards, this can be a challenge.
+ipywidgets "save the generated frames within divs that are hidden and shown whenever the widget is changed". Maybe this is not true as for now (the post is from 2013).
 
+However, I haven't found any evidence that ipywidgets scales to streaming data and million data points. To create "live" dashboards, this can be a challenge.
 I've encountered many examples with slow rendering.
 
 **Open Source Community**
@@ -59,14 +60,44 @@ Although iPython is a dynamic project, ipywidgets does not seem to hold the same
 
 ## bokeh
 
-TODO Check http://bokeh.pydata.org/en/0.10.0/docs/faq.html#how-do-i-get-the-sample-data
-
 ### Pros
 
 **Open Source community**
 
 The project seems to be in active development.
-3.6k stars,730 forks, 668 open issues, 1519 closed (as of 24-01-2016).
+3.6k stars, 730 forks, 668 open issues, 1519 closed (as of 24-01-2016).
+
+Moreover, as a Continuum Analytics project,
+I think the open source community is more welcome than in plotly.
+Continuum states on their page their commitment to open source.
+
+It also seems there's is a clear goal that projects can be easily integrated with other PyData components such as Jupyter, Anaconda, Pandas, etc.
+
+**Easiness of use**
+
+Bokeh glyphs are better than the "all in one" dictionary of Plotly,
+although plotly dictionary is good for overall API consistency between languages.
+
+The advantage of glyphs is that one line represent one item on the graph.
+
+The code is more legible this way:
+adding one line can be written as
+
+```
+p.line(x, y0, legend="y=x^2", line_width=3)
+
+```
+
+This will include a new line on the graph.
+It is clearer and cleaner than to update a dictionary as in plotly.
+
+**Integration with Pandas**
+
+The high level `charts` module seems to work nicely with Pandas dataframes but it is not the standard example.
+It makes me think if integration with Pandas is a priority within the project.
+
+I hope that `charts` module is as flexible as the `plotting` library,
+maybe I need to dive into this module more.
 
 ### Cons
 
@@ -76,6 +107,12 @@ Bad. Writing JS in a Python string is test-unfriendly and simply ugly.
 http://bokeh.pydata.org/en/latest/docs/user_guide/interaction.html?#customjs-for-selections
 
 This is bad for flexibility on the Web client side.
+
+**Code quality**
+
+I was amazed that such a big project does not follow PEP8.
+Also, I was surprised that ``plotting.Line`` is a function, rather than a class.
+It smells bad.
 
 ## d3
 
